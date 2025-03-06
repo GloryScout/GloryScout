@@ -1,3 +1,10 @@
+using GloryScout.ContextDB;
+using GloryScout.Models;
+using Humanizer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+
 namespace GloryScout
 {
     public class Program
@@ -6,8 +13,19 @@ namespace GloryScout
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+			// Add services to the container.
             builder.Services.AddControllersWithViews();
+
+
+			// to create the db from the code here
+			builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(
+					builder.Configuration.GetConnectionString("MyConnection") // the connection string is in the appsettings.json
+				));
+
+            // Add Identity services.
+            builder.Services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<AppDBContext>()
+                .AddDefaultTokenProviders();
 
             var app = builder.Build();
 
@@ -24,7 +42,9 @@ namespace GloryScout
 
             app.UseRouting();
 
-            app.UseAuthorization();
+			app.UseAuthentication();  // Enable authentication middleware.
+			app.UseAuthorization();
+
 
             app.MapControllerRoute(
                 name: "default",
