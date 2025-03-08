@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GloryScout.Models
 {
-	public class User : IdentityUser
+	public class User : IdentityUser<Guid>
 	{
 		[Key]
 		public Guid Id { get; set; }

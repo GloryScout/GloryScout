@@ -22,12 +22,15 @@ namespace GloryScout
 					builder.Configuration.GetConnectionString("MyConnection") // the connection string is in the appsettings.json
 				));
 
-            // Add Identity services.
-            builder.Services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<AppDBContext>()
-                .AddDefaultTokenProviders();
+			
 
-            var app = builder.Build();
+			// Add Identity services.
+			builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+	            .AddEntityFrameworkStores<AppDBContext>()
+	            .AddDefaultTokenProviders()
+	            .AddDefaultUI();
+
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -39,14 +42,16 @@ namespace GloryScout
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            
             app.UseRouting();
-
+            
 			app.UseAuthentication();  // Enable authentication middleware.
 			app.UseAuthorization();
 
+			app.MapControllers();
+			app.MapRazorPages(); // Enables Identity UI Pages
 
-            app.MapControllerRoute(
+			app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 

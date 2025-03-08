@@ -1,10 +1,11 @@
 ﻿using GloryScout.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GloryScout.ContextDB
 {
-	public class AppDBContext : DbContext
+	public class AppDBContext : IdentityDbContext<User,IdentityRole<Guid>,Guid>
 	{
 
 		public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
@@ -16,6 +17,10 @@ namespace GloryScout.ContextDB
 		public DbSet<Likes> Likes { get; set; }
 		public DbSet<Comments> Comments { get; set; }
 		public DbSet<vertificationCodes> vertificationCodes { get; set; }
+		public DbSet<Application> Applications { get; set; }
+		public DbSet<Player> Players { get; set; }
+		public DbSet<Scout> Scouts { get; set; }
+
 
 
 
@@ -74,6 +79,12 @@ namespace GloryScout.ContextDB
 				.WithMany(u => u.Likes)
 				.HasForeignKey(l => l.UserId)
 				.OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+
+			modelBuilder.Entity<Application>()
+				.HasOne(a => a.Scout)
+				.WithMany(s => s.Applications)
+				.HasForeignKey(a => a.ScoutId)
+				.OnDelete(DeleteBehavior.Restrict); // or .NoAction -- Prevent cascade delete
 
 			base.OnModelCreating(modelBuilder);
 		}
